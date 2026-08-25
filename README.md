@@ -1,6 +1,6 @@
 # flutter_xf_slider_images
 
-A Flutter image carousel widget built on [`carousel_slider`](https://pub.dev/packages/carousel_slider). Pass a list of image URLs and get auto-play, a peek of neighboring slides, and page dots sized from the carousel height.
+A Flutter image carousel widget built on [`flutter_xf_slider_images`](https://pub.dev/packages/flutter_xf_slider_images). Pass a list of image URLs and get auto-play, a peek of neighboring slides, and page dots sized from the carousel height.
 
 ## Preview
 
