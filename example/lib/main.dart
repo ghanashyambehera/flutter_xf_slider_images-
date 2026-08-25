@@ -43,7 +43,6 @@ class _ExampleHome extends StatelessWidget {
           FlutterXfSliderImages(
             items: _images,
             height: 200,
-            
           ),
         ],
       ),

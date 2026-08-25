@@ -1,42 +1,90 @@
-# This workflow uses actions that are not certified by GitHub.
-# They are provided by a third-party and are governed by
-# separate terms of service, privacy policy, and support
-# documentation.
+# Flutter CI for flutter_xf_slider_images.
+# This is a Flutter package (not a pure Dart package), so the job uses
+# Flutter SDK rather than dart-lang/setup-dart.
 
-name: Dart
+name: CI
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [main]
   pull_request:
-    branches: [ "main" ]
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
 
 jobs:
-  build:
+  analyze-and-test:
+    name: Format, analyze, and test
     runs-on: ubuntu-latest
+    timeout-minutes: 20
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      # Note: This workflow uses the latest stable version of the Dart SDK.
-      # You can specify other versions if desired, see documentation here:
-      # https://github.com/dart-lang/setup-dart/blob/main/README.md
-      # - uses: dart-lang/setup-dart@v1
-      - uses: dart-lang/setup-dart@9a04e6d73cca37bd455e0608d7e5092f881fd603
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
 
-      - name: Install dependencies
-        run: dart pub get
+      - name: Flutter version
+        run: flutter --version
 
-      # Uncomment this step to verify the use of 'dart format' on each commit.
-      # - name: Verify formatting
-      #   run: dart format --output=none --set-exit-if-changed .
+      - name: Install package dependencies
+        run: flutter pub get
 
-      # Consider passing '--fatal-infos' for slightly stricter analysis.
-      - name: Analyze project source
-        run: dart analyze
+      - name: Install example dependencies
+        working-directory: example
+        run: flutter pub get
 
-      # Your project will need to have tests in test/ and a dependency on
-      # package:test for this step to succeed. Note that Flutter projects will
-      # want to change this to 'flutter test'.
-      - name: Run tests
-        run: dart test
+      - name: Check formatting
+        run: dart format --output=none --set-exit-if-changed .
+
+      - name: Analyze package
+        run: flutter analyze --fatal-infos
+
+      - name: Analyze example
+        working-directory: example
+        run: flutter analyze --fatal-infos
+
+      - name: Test package
+        run: flutter test --coverage
+
+      - name: Test example
+        working-directory: example
+        run: flutter test
+
+      - name: Publish dry-run
+        run: dart pub publish --dry-run
+
+  # Optional: verify the example app can still compile for web (no device needed).
+  example-web:
+    name: Example web build
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    needs: analyze-and-test
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Install example dependencies
+        working-directory: example
+        run: flutter pub get
+
+      - name: Build example (web)
+        working-directory: example
+        run: flutter build web --release
