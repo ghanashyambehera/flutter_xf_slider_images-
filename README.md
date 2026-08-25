@@ -1,69 +1,121 @@
-# Flutter_xf_slider_images
-  A flutter xf slider images widget.
-  
-# Description: 
-  This is new Flutter xf slider images.
+# flutter_xf_slider_images
 
-## Getting Started
+A Flutter image carousel widget built on [`carousel_slider`](https://pub.dev/packages/carousel_slider). Pass a list of image URLs and get auto-play, a peek of neighboring slides, and page dots sized from the carousel height.
 
-This project is a starting point for a Flutter
-[plug-in package](https://flutter.dev/to/develop-plugins),
-a specialized package that includes platform-specific implementation code for
-Android and/or iOS.
+## Preview
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+<p align="center">
+  <img src="screenshots/example_slider.png" alt="Example app: image carousel with page dots" width="320">
+</p>
 
-The plugin project was generated without specifying the `--platforms` flag, no platforms are currently supported.
-To add platforms, run `flutter create -t plugin --platforms <platforms> .` in this directory.
-You can also find a detailed instruction on how to add platforms in the `pubspec.yaml` at https://flutter.dev/to/pubspec-plugin-platforms.
-  
+## Features
 
-## Features 
+### 0.0.1
 
-* Custom child widgets
-* Auto play
+- Network image carousel wrapping `carousel_slider`
+- Auto-play for multiple slides
+
+### 0.0.2
+
+- Center slide enlarged, with side images partially visible
+- Page dots below the slider (one per image); size scales with `height`
+- Tap a dot to jump to that slide
+- Rounded cards, loading spinner, and a broken-image fallback
+- Optional `onPageChanged` and `onItemTap` callbacks
+- Safer API (`items`, `height`) and empty-list handling
+
+See [CHANGELOG.md](CHANGELOG.md) for the full version history.
 
 ## Supported platforms
 
-* Flutter Android
-* Flutter iOS
-* Flutter web
-* Flutter desktop
-## Features
-
-- **Automatic Scrolling**: Automatically scrolls the text with customizable speed.
-- **Scrolling Modes**: Supports endless and bouncing scrolling modes.
-- **Customizable Style**: Set text color, weight, alignment, and direction.
-- **Faded Borders**: Optionally add faded borders on the text for a smooth transition effect.
-- **Selectable Text**: Choose between selectable and non-selectable text.
-- **Interval Spaces**: Define spaces between repeated text in endless mode.
-
-Note: this page is built with flutter-web. For a better user experience, please use a mobile device to open this link.
+- Android
+- iOS
+- Web
+- Desktop (macOS, Windows, Linux)
 
 ## Installation
 
-Add `flutter_xf_slider_images: ^1.0.0` to your `pubspec.yaml` dependencies. And import it:
+Add the package to your `pubspec.yaml`:
+
+```yaml
+dependencies:
+  flutter_xf_slider_images: ^0.0.2
+```
+
+Then import it:
 
 ```dart
 import 'package:flutter_xf_slider_images/flutter_xf_slider_images.dart';
 ```
 
-## How to use
+For a local path (this repo / the example app):
 
-Simply create a `CarouselSlider` widget, and pass the required params:
+```yaml
+dependencies:
+  flutter_xf_slider_images:
+    path: ../
+```
+
+## Usage
+
+```dart
+FlutterXfSliderImages(
+  items: const [
+    'https://example.com/banner-1.jpg',
+    'https://example.com/banner-2.jpg',
+    'https://example.com/banner-3.jpg',
+  ],
+  height: 200,
+)
+```
+
+### Customized example
 
 ```dart
 FlutterXfSliderImages(
   items: images,
   height: 200,
-),
+  autoPlay: true,
+  viewportFraction: 0.85,
+  enlargeCenterPage: true,
+  showIndicator: true,
+  borderRadius: 12,
+  onPageChanged: (index) {
+    // current slide
+  },
+  onItemTap: (index) {
+    // tapped image
+  },
+)
 ```
 
+A full demo lives in [`example/lib/main.dart`](example/lib/main.dart). From the `example` directory:
 
+```bash
+flutter run
+```
 
-All screenshots above can be found at the example project.
+## Parameters
+
+| Parameter | Type | Default | Description |
+| --- | --- | --- | --- |
+| `items` | `List<String>` | required | Image URLs to show. |
+| `height` | `double` | `200` | Carousel height. Indicator dots scale from this value. |
+| `aspectRatio` | `double` | `16 / 9` | Aspect ratio used by the carousel options. |
+| `initialPage` | `int` | `0` | Starting slide index. |
+| `autoPlay` | `bool` | `true` | Auto-advance when there is more than one image. |
+| `autoPlayInterval` | `Duration` | `3s` | Time between auto-play transitions. |
+| `autoPlayAnimationDuration` | `Duration` | `800ms` | Animation length for each transition. |
+| `viewportFraction` | `double` | `0.85` | Fraction of the viewport each slide occupies. |
+| `enlargeCenterPage` | `bool` | `true` | Enlarge the centered slide. |
+| `enableInfiniteScroll` | `bool` | `true` | Loop slides when there is more than one image. |
+| `borderRadius` | `double` | `12` | Corner radius of each image card. |
+| `showIndicator` | `bool` | `true` | Show dots under the carousel. |
+| `indicatorActiveColor` | `Color?` | theme primary | Color of the active (wider) dot. |
+| `indicatorInactiveColor` | `Color?` | on-surface, 28% | Color of inactive dots. |
+| `imageFit` | `BoxFit` | `BoxFit.cover` | How each network image is fitted. |
+| `onPageChanged` | `ValueChanged<int>?` | `null` | Called when the current slide changes. |
+| `onItemTap` | `ValueChanged<int>?` | `null` | Called when a slide is tapped. |
 
 ## License
 
